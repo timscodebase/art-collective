@@ -1,6 +1,3 @@
-import { db } from '$lib/server/db';
-import { users } from '$lib/schemas/user';
-import { eq } from 'drizzle-orm';
 import { scrypt, randomBytes, timingSafeEqual } from 'crypto';
 import { promisify } from 'util';
 
@@ -16,5 +13,8 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 	const [hashedPassword, salt] = hash.split('.');
 	const hashedPasswordBuf = Buffer.from(hashedPassword, 'hex');
 	const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+	if (hashedPasswordBuf.length !== buf.length) {
+		return false;
+	}
 	return timingSafeEqual(hashedPasswordBuf, buf);
 }

@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import { users } from '$lib/schemas/user';
-import { verifyPassword } from '$lib/server/auth';
+import { verifyPassword } from '$lib/server/password'; // Corrected import
 import { eq } from 'drizzle-orm';
 import { json } from '@sveltejs/kit';
 
