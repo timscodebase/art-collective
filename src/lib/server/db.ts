@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client';
 import { env } from '$env/dynamic/private';
 
-// Import all of your schemas and their relations
+// Import all schemas and their relations
 import * as userSchema from '$lib/schemas/user';
 import * as gallerySchema from '$lib/schemas/gallery';
 import * as imageSchema from '$lib/schemas/image';
@@ -12,7 +12,7 @@ const client = createClient({
 	authToken: env.DATABASE_AUTH_TOKEN
 });
 
-// Combine all schemas into a single object for Drizzle
+// Combine all of the imported schemas into a single object
 const combinedSchema = {
 	...userSchema,
 	...gallerySchema,

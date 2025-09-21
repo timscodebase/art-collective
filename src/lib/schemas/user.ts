@@ -6,7 +6,7 @@ export const users = sqliteTable('users', {
 	id: text('id').primaryKey(),
 	email: text('email').notNull().unique(),
 	password: text('password').notNull(),
-	plan: text('plan').default('free').notNull() // 'free' or 'paid'
+	plan: text('plan').default('free').notNull()
 });
 
 export const sessions = sqliteTable('sessions', {
@@ -25,7 +25,7 @@ export const keys = sqliteTable('keys', {
 	hashedPassword: text('hashed_password')
 });
 
-
+// This line was missing the 'export' keyword
 export const usersRelations = relations(users, ({ many }) => ({
 	galleries: many(galleries)
 }));
