@@ -1,6 +1,7 @@
+import { getDb } from '$lib/db';
+import { imageSchema } from './image';
 
-import { getDb } from '../../lib/db';
-
+// Define the schema directly in this file
 export const gallerySchema = {
   title: 'gallery',
   version: 0,
@@ -22,14 +23,18 @@ export const gallerySchema = {
     isFree: {
       type: 'boolean',
     },
+    userId: {
+      type: 'string',
+      ref: 'users'
+    }
   },
-  required: ['id', 'name', 'isFree'],
+  required: ['id', 'name', 'isFree', 'userId'],
 };
 
-import { imageSchema } from './image';
 
 let collections = null;
 
+// The getCollections function remains the same
 export const getCollections = async () => {
   if (!collections) {
     const db = await getDb();

@@ -3,8 +3,12 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
-		// interface PageData {}
+		interface Locals {
+			auth: import('better-auth').AuthRequest;
+		}
+		interface PageData {
+			session: import('better-auth').Session | null;
+		}
 		// interface PageState {}
 		// interface Platform {}
 	}

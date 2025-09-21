@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getCollections } from '../../lib/db';
+  import { getCollections } from '$lib/schemas/gallery'; // Corrected import path
 
   let latestUploads = $state([]);
 

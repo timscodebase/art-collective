@@ -1,12 +1,10 @@
-
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getCollections } from '../../../lib/db';
+  import { getCollections } from '$lib/schemas/gallery'; // Corrected path
   import { page } from '$app/stores';
 
   let gallery = $state(null);
   let images = $state([]);
-
   onMount(async () => {
     const { galleries: galleriesCollection, images: imagesCollection } = await getCollections();
     const galleryId = $page.params.id;
@@ -18,7 +16,6 @@
       images = imageDocs.map(doc => doc.toJSON());
     });
   });
-
 </script>
 
 {#if gallery}
