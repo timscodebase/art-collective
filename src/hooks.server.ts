@@ -11,12 +11,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	// Fetch the full user object from the database
 	const user = await db.query.users.findFirst({
 		where: eq(users.id, sessionId)
 	});
 
-	// Attach the user object to locals
 	if (user) {
 		event.locals.user = user;
 	} else {

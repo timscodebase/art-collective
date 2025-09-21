@@ -9,15 +9,18 @@ export async function load({ locals }) {
 		throw redirect(303, '/login');
 	}
 
-	const userGalleries = await db.select()
-		.from(galleries)
-		.where(eq(galleries.userId, locals.user.id));
+	const userGalleries = await db.query.galleries.findMany({
+		where: eq(galleries.userId, locals.user.id),
+		with: {
+			images: true
+		}
+	});
 
 	return { galleries: userGalleries };
 }
 
 export const actions = {
-	create: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	create: async ({ request, locals }) => {
 		if (!locals.user || locals.user.plan !== 'paid') {
 			return fail(403, { error: 'Forbidden' });
 		}
