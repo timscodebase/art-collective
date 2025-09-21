@@ -1,4 +1,4 @@
 export async function load({ locals }) {
-	const session = await locals.auth.validate();
-	return { session };
+	// Access the session directly from locals
+	return { session: locals.session ?? null };
 }
