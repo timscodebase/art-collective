@@ -1,20 +1,24 @@
-import { auth } from '$lib/server/auth';
-import { svelteKitHandler } from 'better-auth/svelte-kit';
-import { building } from '$app/environment';
-import type { Handle } from '@sveltejs/kit';
+import { db } from '$lib/server/db';
+import { users } from '$lib/schemas/user';
+import { eq } from 'drizzle-orm';
 
-export const handle: Handle = async ({ event, resolve }) => {
-	// Fetch the current session using the new API
-	const sessionData = await auth.api.getSession({
-		headers: event.request.headers
-	});
+export async function handle({ event, resolve }) {
+	const sessionId = event.cookies.get('session_id');
 
-	// Make the session and user available on the server
-	if (sessionData) {
-		event.locals.session = sessionData.session;
-		event.locals.user = sessionData.user;
+	if (!sessionId) {
+		event.locals.user = null;
+		return resolve(event);
 	}
 
-	// Pass the event to the Better Auth handler
-	return svelteKitHandler({ event, resolve, auth, building });
-};
+	const user = await db.query.users.findFirst({
+		where: eq(users.id, sessionId)
+	});
+
+	if (user) {
+		event.locals.user = { id: user.id, email: user.email };
+	} else {
+		event.locals.user = null;
+	}
+
+	return resolve(event);
+}

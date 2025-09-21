@@ -6,8 +6,8 @@
 	let error = '';
 
 	async function signup(e: Event) {
-    e.preventDefault();
-		const res = await fetch('/api/auth/signup', {
+		e.preventDefault();
+		const res = await fetch('/api/signup', {
 			method: 'POST',
 			body: JSON.stringify({ email, password })
 		});
@@ -24,17 +24,8 @@
 <h1>Sign Up</h1>
 
 <form onsubmit={signup}>
-	<label>
-		Email
-		<input type="email" bind:value={email} required />
-	</label>
-	<label>
-		Password
-		<input type="password" bind:value={password} required />
-	</label>
+	<input type="email" bind:value={email} placeholder="Email" required />
+	<input type="password" bind:value={password} placeholder="Password" required />
 	<button type="submit">Sign Up</button>
+	{#if error}<p style="color: red;">{error}</p>{/if}
 </form>
-
-{#if error}
-	<p style="color: red;">{error}</p>
-{/if}

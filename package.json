@@ -15,7 +15,8 @@
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"db:reset": "rm -f local.db && pnpm run db:push"
 	},
 	"devDependencies": {
 		"@libsql/client": "^0.14.0",
@@ -41,7 +42,6 @@
 	},
 	"dependencies": {
 		"@deno/svelte-adapter": "^0.1.0",
-		"better-auth": "^1.3.13",
 		"biome": "^0.3.3",
 		"cloudinary": "^2.7.0",
 		"dexie": "^4.2.0",

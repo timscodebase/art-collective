@@ -1,21 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { session } from '$lib/stores/session';
 
 	let email = '';
 	let password = '';
 	let error = '';
 
 	async function login(e: Event) {
-    e.preventDefault(); 
-		const res = await fetch('/api/auth/login', {
+		e.preventDefault();
+		const res = await fetch('/api/login', {
 			method: 'POST',
 			body: JSON.stringify({ email, password })
 		});
 
 		if (res.ok) {
-			const userSession = await res.json();
-			$session = userSession;
 			await goto('/galleries');
 		} else {
 			const data = await res.json();
@@ -27,17 +24,8 @@
 <h1>Login</h1>
 
 <form onsubmit={login}>
-	<label>
-		Email
-		<input type="email" bind:value={email} required />
-	</label>
-	<label>
-		Password
-		<input type="password" bind:value={password} required />
-	</label>
+	<input type="email" bind:value={email} placeholder="Email" required />
+	<input type="password" bind:value={password} placeholder="Password" required />
 	<button type="submit">Login</button>
+	{#if error}<p style="color: red;">{error}</p>{/if}
 </form>
-
-{#if error}
-	<p style="color: red;">{error}</p>
-{/if}
