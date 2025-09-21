@@ -1,7 +1,7 @@
-
 <script lang="ts">
   import { onMount } from 'svelte';
   import PartySocket from 'partysocket';
+  import { encryptMessage, decryptMessage } from '$lib/crypto';
 
   let messages = $state([]);
   let message = $state('');
@@ -13,8 +13,9 @@
       room: 'my-room',
     });
 
-    socket.onmessage = (event) => {
-      messages = [...messages, event.data];
+    socket.onmessage = async (event) => {
+      const decryptedMessage = await decryptMessage(event.data);
+      messages = [...messages, decryptedMessage];
     };
 
     return () => {
@@ -22,8 +23,9 @@
     };
   });
 
-  function sendMessage() {
-    socket.send(message);
+  async function sendMessage() {
+    const encryptedMessage = await encryptMessage(message);
+    socket.send(encryptedMessage);
     message = '';
   }
 </script>

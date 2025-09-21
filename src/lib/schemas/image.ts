@@ -1,4 +1,4 @@
-
+// src/lib/schemas/image.ts
 export const imageSchema = {
   title: 'image',
   version: 0,
@@ -21,6 +21,11 @@ export const imageSchema = {
     description: {
       type: 'string',
     },
+    createdAt: { // Add this field
+      type: 'string',
+      format: 'date-time',
+      index: true
+    }
   },
-  required: ['id', 'galleryId', 'url'],
+  required: ['id', 'galleryId', 'url', 'createdAt'], // Add createdAt here
 };

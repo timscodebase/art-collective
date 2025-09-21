@@ -1,11 +1,12 @@
-import { defineConfig } from 'drizzle-kit';
+import type { Config } from 'drizzle-kit';
+import 'dotenv/config';
 
-if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
-
-export default defineConfig({
-	schema: './src/lib/server/db/schema.ts',
-	dialect: 'sqlite',
-	dbCredentials: { url: process.env.DATABASE_URL },
-	verbose: true,
-	strict: true
-});
+export default {
+	schema: './src/lib/schemas/user.ts',
+	out: './drizzle',
+	dialect: 'sqlite', // <-- This is the important change
+	dbCredentials: {
+		url: process.env.DATABASE_URL as string,
+		authToken: process.env.DATABASE_AUTH_TOKEN as string
+	}
+} satisfies Config;
