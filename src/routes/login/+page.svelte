@@ -13,7 +13,9 @@
 		});
 
 		if (res.ok) {
-			await goto('/galleries');
+			// Manually trigger a page reload to get the new session data
+			// This is the simplest way to ensure all parts of the app update.
+			window.location.href = '/galleries';
 		} else {
 			const data = await res.json();
 			error = data.error;
