@@ -16,7 +16,8 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
-		"db:reset": "rm -f local.db && pnpm run db:push"
+		"db:reset": "rm -f local.db && pnpm run db:push",
+		"db:seed": "tsx scripts/seed.ts"
 	},
 	"devDependencies": {
 		"@libsql/client": "^0.14.0",
@@ -31,6 +32,7 @@
 		"prettier-plugin-svelte": "^3.3.3",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
+		"tsx": "^4.20.5",
 		"typescript": "^5.0.0",
 		"vite": "^7.0.4",
 		"vite-plugin-devtools-json": "^1.0.0"
@@ -44,10 +46,8 @@
 		"@deno/svelte-adapter": "^0.1.0",
 		"biome": "^0.3.3",
 		"cloudinary": "^2.7.0",
-		"dexie": "^4.2.0",
 		"iconify": "^1.4.0",
 		"partykit": "^0.0.115",
-		"partysocket": "^1.1.5",
-		"rxdb": "^16.19.0"
+		"partysocket": "^1.1.5"
 	}
 }

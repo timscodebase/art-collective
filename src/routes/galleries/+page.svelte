@@ -1,56 +1,106 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { getCollections } from '$lib/schemas/gallery';
-  import { page } from '$app/stores';
+	import { page } from '$app/stores';
+	import { enhance } from '$app/forms';
 
-  let galleries = $state([]);
-  let name = $state('');
-  let description = $state('');
-  let themeColor = $state('#000000');
-  let isFree = $state(true);
-  const user = $page.data.user; // Get the user from the page store
-
-  onMount(async () => {
-    // Only proceed if the user is logged in
-    if (user) {
-      const { galleries: galleriesCollection, images: imagesCollection } = await getCollections();
-      galleriesCollection.find({ selector: { userId: user.id } }).$.subscribe(async (galleries) => {
-        const galleriesWithImages = await Promise.all(galleries.map(async (gallery) => {
-          const images = await imagesCollection.find({ selector: { galleryId: gallery.id } }).exec();
-          return { ...gallery.toJSON(), images: images.map(img => img.toJSON()) };
-        }));
-        galleries = galleriesWithImages;
-      });
-    }
-  });
-
-  async function createGallery(e: Event) {
-    e.preventDefault();
-    if (!user) {
-      alert('You must be logged in to create a gallery.');
-      return;
-    }
-    const { galleries: galleriesCollection } = await getCollections();
-    await galleriesCollection.insert({
-      id: new Date().toISOString(),
-      name,
-      description,
-      themeColor,
-      isFree,
-      userId: user.id
-    });
-    name = '';
-    description = '';
-    themeColor = '#000000';
-    isFree = true;
-  }
-
-  // ... (the rest of the file remains the same)
+	// Define the expected shape of data, including galleries
+	interface Gallery {
+		id: string;
+		name: string;
+		description: string;
+		price: number;
+	}
+	interface PageData {
+		user: { id: string; email: string; plan: string } | null;
+		galleries?: Gallery[];
+	}
+	let { data }: { data: PageData } = $props();
+	let createGalleryDialog: HTMLDialogElement;
 </script>
 
-<h1>Galleries</h1>
+<h1>My Galleries</h1>
 
-{#if user}
-  {:else}
-  <p>Please log in to view and create galleries.</p>
+{#if $page.data.user?.plan === 'paid'}
+	<button onclick={() => createGalleryDialog.showModal()}>Create New Gallery</button>
 {/if}
+
+<dialog bind:this={createGalleryDialog}>
+	<h2>Create New Gallery</h2>
+	<form
+		method="POST"
+		action="?/create"
+		use:enhance={() => {
+			createGalleryDialog.close();
+			return async ({ update }) => {
+				await update();
+			};
+		}}
+	>
+		<label for="gallery-name">Name</label>
+		<input id="gallery-name" name="name" type="text" placeholder="Gallery Name" required />
+
+		<label for="gallery-description">Description</label>
+		<textarea id="gallery-description" name="description" placeholder="Description"></textarea>
+
+		<label for="gallery-price">Price ($)</label>
+		<input id="gallery-price" name="price" type="number" placeholder="0" min="0" />
+
+		<div>
+			<button type="button" onclick={() => createGalleryDialog.close()}>Cancel</button>
+			<button type="submit">Create</button>
+		</div>
+	</form>
+</dialog>
+
+{#if data.galleries && data.galleries.length > 0}
+	<ul>
+		{#each data.galleries as gallery (gallery.id)}
+			<a href="/galleries/{gallery.id}">
+				<li>
+					<h2>{gallery.name}</h2>
+					<p>{gallery.description}</p>
+					<p>{gallery.price > 0 ? `$${gallery.price}` : 'Free'}</p>
+				</li>
+			</a>
+		{/each}
+	</ul>
+{:else if $page.data.user}
+	<p>You haven't created any galleries yet.</p>
+{:else}
+	<p>Please log in to view galleries.</p>
+{/if}
+
+<style>
+	ul {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 1rem;
+		list-style: none;
+		padding: 0;
+	}
+
+	li {
+		border: 1px solid #ccc;
+		padding: 1rem;
+		height: 100%;
+	}
+
+	a {
+		text-decoration: none;
+		color: inherit;
+	}
+	
+	dialog {
+		width: 500px;
+		padding: 2rem;
+		border: 1px solid #ccc;
+		border-radius: 8px;
+	}
+	dialog::backdrop {
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+</style>

@@ -11,7 +11,10 @@ export async function POST({ request }) {
 		await db.insert(users).values({
 			id: randomUUID(),
 			email,
-			password: hashedPassword
+			password: hashedPassword,
+			// For testing, we'll default new users to 'paid'
+			// In a real app, this would default to 'free' and be updated via a payment flow
+			plan: 'paid'
 		});
 		return json({ success: true });
 	} catch (e) {

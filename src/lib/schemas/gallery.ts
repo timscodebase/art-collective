@@ -1,51 +1,23 @@
-import { getDb } from '$lib/db';
-import { imageSchema } from './image';
+import { sqliteTable, text, real } from 'drizzle-orm/sqlite-core';
+import { users } from './user';
+import { relations } from 'drizzle-orm';
+import { images } from './image';
 
-// Define the schema directly in this file
-export const gallerySchema = {
-  title: 'gallery',
-  version: 0,
-  type: 'object',
-  properties: {
-    id: {
-      type: 'string',
-      primary: true,
-    },
-    name: {
-      type: 'string',
-    },
-    description: {
-      type: 'string',
-    },
-    themeColor: {
-      type: 'string',
-    },
-    isFree: {
-      type: 'boolean',
-    },
-    userId: {
-      type: 'string',
-      ref: 'users'
-    }
-  },
-  required: ['id', 'name', 'isFree', 'userId'],
-};
+export const galleries = sqliteTable('galleries', {
+	id: text('id').primaryKey(),
+	name: text('name').notNull(),
+	description: text('description'),
+	themeColor: text('theme_color').default('#000000'),
+	price: real('price').default(0).notNull(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id)
+});
 
-
-let collections = null;
-
-// The getCollections function remains the same
-export const getCollections = async () => {
-  if (!collections) {
-    const db = await getDb();
-    collections = await db.addCollections({
-      galleries: {
-        schema: gallerySchema,
-      },
-      images: {
-        schema: imageSchema,
-      },
-    });
-  }
-  return collections;
-};
+export const galleriesRelations = relations(galleries, ({ one, many }) => ({
+	user: one(users, {
+		fields: [galleries.userId],
+		references: [users.id]
+	}),
+	images: many(images)
+}));

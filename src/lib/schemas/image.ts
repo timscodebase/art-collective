@@ -1,31 +1,21 @@
-// src/lib/schemas/image.ts
-export const imageSchema = {
-  title: 'image',
-  version: 0,
-  type: 'object',
-  properties: {
-    id: {
-      type: 'string',
-      primary: true,
-    },
-    galleryId: {
-      type: 'string',
-      ref: 'galleries',
-    },
-    url: {
-      type: 'string',
-    },
-    title: {
-      type: 'string',
-    },
-    description: {
-      type: 'string',
-    },
-    createdAt: { // Add this field
-      type: 'string',
-      format: 'date-time',
-      index: true
-    }
-  },
-  required: ['id', 'galleryId', 'url', 'createdAt'], // Add createdAt here
-};
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { galleries } from './gallery';
+import { relations } from 'drizzle-orm';
+
+export const images = sqliteTable('images', {
+	id: text('id').primaryKey(),
+	galleryId: text('gallery_id')
+		.notNull()
+		.references(() => galleries.id),
+	url: text('url').notNull(),
+	title: text('title'),
+	description: text('description'),
+	createdAt: text('created_at').notNull()
+});
+
+export const imagesRelations = relations(images, ({ one }) => ({
+	gallery: one(galleries, {
+		fields: [images.galleryId],
+		references: [galleries.id]
+	})
+}));

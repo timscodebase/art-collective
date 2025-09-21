@@ -1,9 +1,12 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
+import { galleries } from './gallery';
 
 export const users = sqliteTable('users', {
 	id: text('id').primaryKey(),
 	email: text('email').notNull().unique(),
-	password: text('password').notNull()
+	password: text('password').notNull(),
+	plan: text('plan').default('free').notNull() // 'free' or 'paid'
 });
 
 export const sessions = sqliteTable('sessions', {
@@ -11,7 +14,7 @@ export const sessions = sqliteTable('sessions', {
 	userId: text('user_id')
 		.notNull()
 		.references(() => users.id),
-	expires: integer('expires').notNull()
+	expires: text('expires').notNull()
 });
 
 export const keys = sqliteTable('keys', {
@@ -21,3 +24,8 @@ export const keys = sqliteTable('keys', {
 		.references(() => users.id),
 	hashedPassword: text('hashed_password')
 });
+
+
+export const usersRelations = relations(users, ({ many }) => ({
+	galleries: many(galleries)
+}));

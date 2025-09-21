@@ -15,7 +15,8 @@ export async function handle({ event, resolve }) {
 	});
 
 	if (user) {
-		event.locals.user = { id: user.id, email: user.email };
+		// Pass the full user object to locals
+		event.locals.user = { id: user.id, email: user.email, plan: user.plan };
 	} else {
 		event.locals.user = null;
 	}
